@@ -30,13 +30,25 @@ function App() {
               Search
             </button>
 
-            {
-              recipes.map((recipe) => (
-                <div key={recipe.idMeal}>
-                  <h2>{recipe.strMeal}</h2>
-                </div>
-              ))
-            }
+            <div className="recipe-grid">
+              {
+                recipes.map((recipe) => (
+                  <div className="recipe-card" key={recipe.idMeal}>
+                    <img 
+                      src={recipe.strMealThumb}  
+                      alt={recipe.strMeal}
+                      width="200"
+                    />
+
+                    <h2>{recipe.strMeal}</h2>
+
+                    <p>Category: {recipe.strCategory}</p>
+
+                    <p>Area: {recipe.strArea}</p>
+                  </div>
+                ))
+              }
+            </div>
         </div>
     );
 }
