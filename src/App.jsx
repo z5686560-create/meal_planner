@@ -4,6 +4,7 @@ import "./App.css";
 function App() {
   const [search, setSearch] = useState("");
   const [recipes, setRecipes] = useState([]);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
 
   const fetchRecipes = async () => {
     const response = await fetch(
@@ -33,7 +34,7 @@ function App() {
             <div className="recipe-grid">
               {
                 recipes.map((recipe) => (
-                  <div className="recipe-card" key={recipe.idMeal}>
+                  <div className="recipe-card" key={recipe.idMeal} onClick={() => setSelectedRecipe(recipe)}>
                     <img 
                       src={recipe.strMealThumb}  
                       alt={recipe.strMeal}
@@ -49,6 +50,43 @@ function App() {
                 ))
               }
             </div>
+
+            {
+              selectedRecipe && (
+                <div
+                  className="modal-overlay"
+                  onClick={() => setSelectedRecipe(null)}
+                >
+                  <div 
+                    className="modal"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <h2>{selectedRecipe.strMeal}</h2>
+
+                    <img 
+                      src={selectedRecipe.strMealThumb}
+                      alt={selectedRecipe.strMeal}
+                      style={{width: "100%"}}
+                    />
+
+                    <p>
+                      <b>Category:</b> {selectedRecipe.strCategory}
+                    </p>
+
+                    <p>
+                      <b>Area:</b> {selectedRecipe.strArea}
+                    </p>
+
+                    <p>{selectedRecipe.strInstructions}</p>
+
+                    <button onClick={() => setSelectedRecipe(null)}>
+                      Close
+                    </button>
+                  </div>
+                </div>
+              )
+            }
+
         </div>
     );
 }
