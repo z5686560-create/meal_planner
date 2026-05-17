@@ -5,8 +5,70 @@ function App() {
   const [search, setSearch] = useState("");
   const [recipes, setRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [shoppingList, setShoppingList] = useState([]);
+
+  const addToShoppingList = () => {
+      const ingredients = [];
+
+      for (let i = 1; i <= 20; i ++) {
+        const ingredient = selectedRecipe[`strIngredient${i}`];
+        const measure = selectedRecipe[`strMeasure${i}`];
+        if (ingredient && ingredient.trim() !== "") {
+          ingredients.push({
+            ingredient,
+            measure
+          });
+        }
+      }
+
+      const existingList = JSON.parse(localStorage.getItem("shoppingList")) || [];
+
+      const updatedList = [...existingList, ...ingredients];
+
+      localStorage.setItem(
+        "shoppingList",
+        JSON.stringify(updatedList)
+      );
+
+      console.log(updatedList);
+    };
+
+  const loadShoppingList = () => {
+    const storedList = JSON.parse(localStorage.getItem("shoppingList")) || [];
+    const mergedIngredients = {};
+
+    storedList.forEach((item) => {
+
+      if (mergedIngredients[item.ingredient]) {
+
+        mergedIngredients[item.ingredient] +=
+          ` + ${item.measure}`;
+
+      } else {
+
+        mergedIngredients[item.ingredient] =
+          item.measure;
+      }
+    });
+
+    const finalList = Object.entries(mergedIngredients).map(
+      ([ingredient, measure]) => ({
+        ingredient,
+        measure
+      })
+    );
+
+    finalList.sort((a, b) =>
+      a.ingredient.localeCompare(b.ingredient)
+    );
+
+    setShoppingList(finalList);
+
+  }
+
 
   const fetchRecipes = async () => {
+
     const response = await fetch(
         `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`
     );
@@ -29,6 +91,10 @@ function App() {
 
             <button onClick={fetchRecipes}>
               Search
+            </button>
+
+            <button onClick={loadShoppingList}>
+              View My Shopping List
             </button>
 
             <div className="recipe-grid">
@@ -79,6 +145,10 @@ function App() {
 
                     <p>{selectedRecipe.strInstructions}</p>
 
+                    <button onClick={addToShoppingList}>
+                      Add to My Shopping List
+                    </button>
+
                     <button onClick={() => setSelectedRecipe(null)}>
                       Close
                     </button>
@@ -87,7 +157,23 @@ function App() {
               )
             }
 
+            <div className="shoppingList">
+              <h2>My Shopping List</h2>
+
+              {
+                shoppingList.map((item, index) => (
+                  <div key={index}>
+                    <p>
+                      {item.ingredient} - {item.measure}
+                    </p>
+                  </div>
+                ))
+              }
+
+            </div>
+
         </div>
+      
     );
 }
 

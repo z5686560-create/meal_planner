@@ -65,3 +65,13 @@ button {
 
   border-radius: 10px;
 }
+
+.shopping-list {
+  margin-top: 40px;
+
+  background: white;
+
+  padding: 20px;
+
+  border-radius: 20px;
+}
